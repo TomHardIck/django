@@ -1,0 +1,43 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Товары{% endif %}
+{% endblock %}
+{% block content %}
+<div id="sidebar">
+<h3>Категория</h3>
+<ul>
+<li {% if not category %}class="selected"{% endif %}>
+<a href="{% url 'main:product_list' %}">Все</a>
+</li>
+{% for c in categories %}
+<li {% if category.slug == c.slug %}class="selected" {% endif %}>
+<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+</li>
+{% endfor %}
+</ul>
+</div>
+<div id="main" class="product-list">
+<h1>{% if category %}{{ category.name }}{% else %}Товар{% endif %}</h1>
+{% for product in products %}
+<div class="item">
+<a href="{{ product.get_absolute_url }}">
+    <img src="{% if product.image %}{{ product.image.url }}{%else %}{% static 'img/no_image.png' %}{% endif %}">
+</a>
+<a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+<br>
+${{ product.price }}
+        <a class="btn btn-primary" href="{% url 'main:delete_product' pk=product.pk %}">Удалить</a>
+    <a href="{% url 'main:update_product' pk=product.pk %}" class="btn btn-primary">Обновить товар</a>
+</div>
+{% endfor %}
+</div>
+<div><a href="{% url 'main:add_product' %}" class="btn btn-primary">Добавить товар</a></div>
+
+
+<form action="/items" method="get">
+        <label for="results">Введите фильтр: </label>
+        <input id="results" type="text" name="nameFilter">
+        <input type="submit" value="Поиск">
+    </form>
+{% endblock %}
